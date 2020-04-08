@@ -1,0 +1,9 @@
+[package]
+name = "tddbc-rust-practice"
+version = "0.1.0"
+authors = ["@h0ng0yut0"]
+edition = "2020"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
