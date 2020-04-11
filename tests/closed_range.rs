@@ -1,8 +1,8 @@
-extern crate tddbc_rust_practice;
-use tddbc_rust_practice::closed_range::ClosedRange;
+use tddbc_rust_practice::range::closed_range::ClosedRange;
+use tddbc_rust_practice::range::Range; // Trait自体もuseしてあげないとfnが見つからない
 
 #[test]
-fn new_success() {
+fn closed_range_new_success() {
   // 通常
   let lower = 1;
   let upper = 5;
@@ -17,7 +17,7 @@ fn new_success() {
 }
 
 #[test]
-fn new_same_numbers() {
+fn closed_range_new_same_numbers() {
   // 閉区間は両端を含むので、下限と上限は同じ値を入力しても問題ない
   let lower = 5;
   let upper = 5;
@@ -33,7 +33,7 @@ fn new_same_numbers() {
 
 #[test]
 #[should_panic(expected = "下限と上限の値が不正です")]
-fn new_error() {
+fn closed_range_new_error() {
   // 下限、上限の入力が不正な場合
   let lower = 5;
   let upper = 1;
@@ -72,8 +72,6 @@ fn closed_range_equals_same() {
   let closed_range = ClosedRange::new(lower, upper);
   // 同じもの
   let closed_range_same = ClosedRange::new(1, 5);
-
-  // 含まれる
   assert_eq!(closed_range.equals(closed_range_same), true);
 }
 
@@ -84,8 +82,6 @@ fn closed_range_equals_different() {
   let closed_range = ClosedRange::new(lower, upper);
   // 異なるもの
   let closed_range_different = ClosedRange::new(1, 10);
-
-  // 含まれる
   assert_eq!(closed_range.equals(closed_range_different), false);
 }
 
