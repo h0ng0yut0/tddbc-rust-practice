@@ -1,6 +1,5 @@
-extern crate tddbc_rust_practice;
-use tddbc_rust_practice::range::ClosedRange;
-use tddbc_rust_practice::range::OpenRange;
+use tddbc_rust_practice::range::closed_range::ClosedRange;
+use tddbc_rust_practice::range::open_range::OpenRange;
 use tddbc_rust_practice::range::Range; // Trait自体もuseしてあげないとfnが見つからない
 
 fn main() {
