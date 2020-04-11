@@ -10,8 +10,6 @@ pub struct ClosedRange {
 }
 
 impl Range for ClosedRange {
-  type R = ClosedRange;
-
   fn new(lower: i8, upper: i8) -> ClosedRange {
     match (lower, upper) {
       (lower, upper) if lower > upper => Err("下限と上限の値が不正です".to_owned()),

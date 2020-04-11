@@ -10,8 +10,6 @@ pub struct OpenRange {
 }
 
 impl Range for OpenRange {
-  type R = OpenRange;
-
   fn new(lower: i8, upper: i8) -> OpenRange {
     match (lower, upper) {
       (lower, upper) if lower >= upper => Err("下限と上限の値が不正です".to_owned()),
