@@ -1,8 +1,10 @@
 use tddbc_rust_practice::range::closed_range::ClosedRange;
-use tddbc_rust_practice::range::Range; // Trait自体もuseしてあげないとfnが見つからない
+use tddbc_rust_practice::range::open_range::OpenRange;
+use tddbc_rust_practice::range::MultiRange;
+use tddbc_rust_practice::range::SelfRange;
 
 #[test]
-fn closed_range_new_success() {
+fn new_success() {
   // 通常
   let lower = 1;
   let upper = 5;
@@ -17,7 +19,7 @@ fn closed_range_new_success() {
 }
 
 #[test]
-fn closed_range_new_same_numbers() {
+fn new_same_numbers() {
   // 閉区間は両端を含むので、下限と上限は同じ値を入力しても問題ない
   let lower = 5;
   let upper = 5;
@@ -33,7 +35,7 @@ fn closed_range_new_same_numbers() {
 
 #[test]
 #[should_panic(expected = "下限と上限の値が不正です")]
-fn closed_range_new_error() {
+fn new_error() {
   // 下限、上限の入力が不正な場合
   let lower = 5;
   let upper = 1;
@@ -41,7 +43,7 @@ fn closed_range_new_error() {
 }
 
 #[test]
-fn closed_range_to_string() {
+fn to_string() {
   let lower = 1;
   let upper = 5;
   let closed_range = ClosedRange::new(lower, upper);
@@ -50,7 +52,7 @@ fn closed_range_to_string() {
 }
 
 #[test]
-fn closed_range_contains() {
+fn contains() {
   let lower = 1;
   let upper = 5;
   let closed_range = ClosedRange::new(lower, upper);
@@ -66,43 +68,76 @@ fn closed_range_contains() {
 }
 
 #[test]
-fn closed_range_equals_same() {
+fn equals_same() {
   let lower = 1;
   let upper = 5;
   let closed_range = ClosedRange::new(lower, upper);
   // 同じもの
   let closed_range_same = ClosedRange::new(1, 5);
-  assert_eq!(closed_range.equals(closed_range_same), true);
+  assert_eq!(closed_range.equals(&closed_range_same), true);
 }
 
 #[test]
-fn closed_range_equals_different() {
+fn equals_different() {
   let lower = 1;
   let upper = 5;
   let closed_range = ClosedRange::new(lower, upper);
   // 異なるもの
   let closed_range_different = ClosedRange::new(1, 10);
-  assert_eq!(closed_range.equals(closed_range_different), false);
+  assert_eq!(closed_range.equals(&closed_range_different), false);
 }
 
 #[test]
-fn closed_range_is_connected_to() {
+fn is_connected_to() {
   let lower = 1;
   let upper = 5;
   let closed_range = ClosedRange::new(lower, upper);
 
   // 接続
   let connected = ClosedRange::new(2, 6);
-  assert_eq!(closed_range.is_connected_to(connected), true);
+  assert_eq!(closed_range.is_connected_to(&connected), true);
 
   // 接続していない
   let unconnected = ClosedRange::new(6, 10);
-  assert_eq!(closed_range.is_connected_to(unconnected), false);
+  assert_eq!(closed_range.is_connected_to(&unconnected), false);
 
   // 閉区間の両端は含まれる
   let upper_connected = ClosedRange::new(5, 10);
-  assert_eq!(closed_range.is_connected_to(upper_connected), true);
+  assert_eq!(closed_range.is_connected_to(&upper_connected), true);
 
   let lower_connected = ClosedRange::new(-10, 1);
-  assert_eq!(closed_range.is_connected_to(lower_connected), true);
+  assert_eq!(closed_range.is_connected_to(&lower_connected), true);
+}
+
+#[test]
+fn equals_with_open_range() {
+  let lower = 1;
+  let upper = 5;
+  let closed_range = ClosedRange::new(lower, upper);
+
+  // 上端、下端に同じ整数が入ろうとも、必ずfalse
+  let open_range = OpenRange::new(lower, upper);
+  assert_eq!(closed_range.equals(&open_range), false);
+}
+
+#[test]
+fn is_connected_to_with_open_range() {
+  let lower = 1;
+  let upper = 5;
+  let closed_range = ClosedRange::new(lower, upper);
+
+  // 接続
+  let connected = OpenRange::new(4, 8);
+  assert_eq!(closed_range.is_connected_to(&connected), true);
+
+  // 接続していない
+  let unconnected = OpenRange::new(6, 10);
+  assert_eq!(closed_range.is_connected_to(&unconnected), false);
+
+  // 閉区間の両端は含まれ、閉区間の両端は含まれない
+  let upper_connected = OpenRange::new(5, 10);
+  assert_eq!(closed_range.is_connected_to(&upper_connected), false);
+
+  let lower_connected = OpenRange::new(-10, 1);
+  assert_eq!(closed_range.is_connected_to(&lower_connected), false);
 }
