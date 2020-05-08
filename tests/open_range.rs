@@ -108,6 +108,14 @@ fn is_connected_to() {
 
   let lower_connected = OpenRange::new(-10, 1);
   assert_eq!(open_range.is_connected_to(&lower_connected), false);
+
+  // ベースを包含している
+  let range_include_base = OpenRange::new(-10, 10);
+  assert_eq!(open_range.is_connected_to(&range_include_base), true);
+
+  // ベースが包含している
+  let base_include_range = OpenRange::new(2, 4);
+  assert_eq!(open_range.is_connected_to(&base_include_range), true);
 }
 
 #[test]
@@ -141,4 +149,12 @@ fn is_connected_to_with_closed_range() {
 
   let lower_connected = ClosedRange::new(-10, 1);
   assert_eq!(open_range.is_connected_to(&lower_connected), false);
+
+  // ベースを包含している
+  let range_include_base = ClosedRange::new(-10, 10);
+  assert_eq!(open_range.is_connected_to(&range_include_base), true);
+
+  // ベースが包含している
+  let base_include_range = ClosedRange::new(2, 4);
+  assert_eq!(open_range.is_connected_to(&base_include_range), true);
 }

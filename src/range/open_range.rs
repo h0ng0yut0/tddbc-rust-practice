@@ -38,6 +38,7 @@ impl MultiRange<OpenRange> for OpenRange {
     match range {
       r if self.lower < r.upper && r.upper < self.upper => true,
       r if self.lower < r.lower && r.lower < self.upper => true,
+      r if r.lower <= self.lower && self.upper <= r.upper => true,
       _ => false,
     }
   }
@@ -52,6 +53,7 @@ impl MultiRange<ClosedRange> for OpenRange {
     match range {
       r if self.lower < r.upper && r.upper < self.upper => true,
       r if self.lower < r.lower && r.lower < self.upper => true,
+      r if r.lower <= self.lower && self.upper <= r.upper => true,
       _ => false,
     }
   }
