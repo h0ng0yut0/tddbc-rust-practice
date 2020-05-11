@@ -19,6 +19,14 @@ pub trait SelfRange {
 // 他のstructが絡むもの
 pub trait MultiRange<T> {
   fn equals(&self, range: &T) -> bool;
-  fn is_connected_to(&self, range: &T) -> bool;
-  fn get_intersection(&self, range: &T) -> String;
+  fn is_connected_to(&self, range: &T) -> bool {
+    match self.intersection(range) {
+      Ok(_) => true,
+      Err(_) => false,
+    }
+  }
+  fn get_intersection(&self, range: &T) -> String {
+    self.intersection(range).unwrap()
+  }
+  fn intersection(&self, range: &T) -> Result<String, String>;
 }

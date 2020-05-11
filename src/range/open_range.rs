@@ -34,21 +34,12 @@ impl MultiRange<OpenRange> for OpenRange {
     self.lower == open_range.lower && self.upper == open_range.upper
   }
 
-  fn is_connected_to(&self, range: &OpenRange) -> bool {
-    match range {
-      r if self.lower < r.upper && r.upper < self.upper => true,
-      r if self.lower < r.lower && r.lower < self.upper => true,
-      r if r.lower <= self.lower && self.upper <= r.upper => true,
-      _ => false,
-    }
-  }
-
-  fn get_intersection(&self, range: &OpenRange) -> String {
+  fn intersection(&self, range: &OpenRange) -> Result<String, String> {
     match range {
       r if r.lower <= self.lower && self.lower < r.upper && r.upper < self.upper => {
         Ok(format!("({},{})", self.lower, r.upper))
       }
-      r if self.lower < r.lower && self.lower < r.lower && self.upper <= r.upper => {
+      r if self.lower < r.lower && r.lower < self.upper && self.upper <= r.upper => {
         Ok(format!("({},{})", r.lower, self.upper))
       }
       r if r.lower <= self.lower && self.upper <= r.upper => {
@@ -59,7 +50,6 @@ impl MultiRange<OpenRange> for OpenRange {
       }
       _ => Err("共通集合はありません".to_owned()),
     }
-    .unwrap()
   }
 }
 
@@ -68,16 +58,7 @@ impl MultiRange<ClosedRange> for OpenRange {
     false
   }
 
-  fn is_connected_to(&self, range: &ClosedRange) -> bool {
-    match range {
-      r if self.lower < r.upper && r.upper < self.upper => true,
-      r if self.lower < r.lower && r.lower < self.upper => true,
-      r if r.lower <= self.lower && self.upper <= r.upper => true,
-      _ => false,
-    }
-  }
-
-  fn get_intersection(&self, range: &ClosedRange) -> String {
+  fn intersection(&self, range: &ClosedRange) -> Result<String, String> {
     match range {
       r if r.lower <= self.lower && self.lower < r.upper && r.upper < self.upper => {
         Ok(format!("({},{}]", self.lower, r.upper))
@@ -93,6 +74,5 @@ impl MultiRange<ClosedRange> for OpenRange {
       }
       _ => Err("共通集合はありません".to_owned()),
     }
-    .unwrap()
   }
 }
