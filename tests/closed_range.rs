@@ -43,6 +43,29 @@ fn new_error() {
 }
 
 #[test]
+fn parse() {
+  let lower = 12;
+  let upper = 56;
+  let base = ClosedRange::new(lower, upper);
+
+  let parsed = ClosedRange::parse("[12,56]".to_owned());
+
+  assert_eq!(base.equals(&parsed), true)
+}
+
+#[test]
+#[should_panic]
+fn parse_error() {
+  ClosedRange::parse("(1,5]".to_owned());
+}
+
+#[test]
+#[should_panic(expected = "下限と上限の値が不正です")]
+fn parse_error_number() {
+  ClosedRange::parse("[100,50]".to_owned());
+}
+
+#[test]
 fn to_string() {
   let lower = 1;
   let upper = 5;

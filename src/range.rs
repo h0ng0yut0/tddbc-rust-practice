@@ -14,6 +14,7 @@ pub trait SelfRange {
     }
     return true;
   }
+  fn parse(string: String) -> Self;
 }
 
 // 他のstructが絡むもの

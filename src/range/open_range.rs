@@ -1,6 +1,8 @@
 use crate::range::closed_range::ClosedRange;
 use crate::range::MultiRange;
 use crate::range::SelfRange;
+extern crate regex;
+use regex::Regex;
 
 #[derive(Clone)]
 pub struct OpenRange {
@@ -26,6 +28,15 @@ impl SelfRange for OpenRange {
 
   fn contains(&self, number: i8) -> bool {
     self.lower < number && number < self.upper
+  }
+
+  fn parse(string: String) -> OpenRange {
+    let regex = Regex::new(r"\((\d+),(\d+)\)").unwrap();
+    let caps = regex.captures(&string).unwrap();
+    Self::new(
+      caps.at(1).unwrap().parse().unwrap(),
+      caps.at(2).unwrap().parse().unwrap(),
+    )
   }
 }
 
