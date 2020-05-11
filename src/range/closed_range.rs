@@ -42,6 +42,25 @@ impl MultiRange<OpenRange> for ClosedRange {
       _ => false,
     }
   }
+
+  fn get_intersection(&self, range: &OpenRange) -> String {
+    match range {
+      r if r.lower <= self.lower && self.lower < r.upper && r.upper < self.upper => {
+        Ok(format!("[{},{})", self.lower, r.upper))
+      }
+      r if self.lower < r.lower && r.lower < self.upper && self.upper <= r.upper => {
+        Ok(format!("({},{}]", r.lower, self.upper))
+      }
+      r if r.lower < self.lower && self.upper < r.upper => {
+        Ok(format!("[{},{}]", self.lower, self.upper))
+      }
+      r if self.lower <= r.lower && r.upper <= self.upper => {
+        Ok(format!("({},{})", r.lower, r.upper))
+      }
+      _ => Err("共通集合はありません".to_owned()),
+    }
+    .unwrap()
+  }
 }
 
 impl MultiRange<ClosedRange> for ClosedRange {
@@ -56,5 +75,24 @@ impl MultiRange<ClosedRange> for ClosedRange {
       r if r.lower < self.lower && self.upper < r.upper => true,
       _ => false,
     }
+  }
+
+  fn get_intersection(&self, range: &ClosedRange) -> String {
+    match range {
+      r if r.lower <= self.lower && self.lower <= r.upper && r.upper <= self.upper => {
+        Ok(format!("[{},{}]", self.lower, r.upper))
+      }
+      r if self.lower <= r.lower && r.lower <= self.upper && self.upper <= r.upper => {
+        Ok(format!("[{},{}]", r.lower, self.upper))
+      }
+      r if r.lower <= self.lower && self.upper <= r.upper => {
+        Ok(format!("[{},{}]", self.lower, self.upper))
+      }
+      r if self.lower <= r.lower && r.upper <= self.upper => {
+        Ok(format!("[{},{}]", r.lower, r.upper))
+      }
+      _ => Err("共通集合はありません".to_owned()),
+    }
+    .unwrap()
   }
 }
