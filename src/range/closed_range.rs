@@ -1,6 +1,8 @@
 use crate::range::open_range::OpenRange;
 use crate::range::MultiRange;
 use crate::range::SelfRange;
+extern crate regex;
+use regex::Regex;
 
 #[derive(Clone)]
 pub struct ClosedRange {
@@ -27,6 +29,15 @@ impl SelfRange for ClosedRange {
   fn contains(&self, number: i8) -> bool {
     self.lower <= number && number <= self.upper
   }
+
+  fn parse(string: String) -> ClosedRange {
+    let regex = Regex::new(r"\[(\d+),(\d+)\]").unwrap();
+    let caps = regex.captures(&string).unwrap();
+    Self::new(
+      caps.at(1).unwrap().parse().unwrap(),
+      caps.at(2).unwrap().parse().unwrap(),
+    )
+  }
 }
 
 impl MultiRange<OpenRange> for ClosedRange {
@@ -34,12 +45,21 @@ impl MultiRange<OpenRange> for ClosedRange {
     false
   }
 
-  fn is_connected_to(&self, range: &OpenRange) -> bool {
+  fn intersection(&self, range: &OpenRange) -> Result<String, String> {
     match range {
-      r if self.lower < r.upper && r.upper < self.upper => true,
-      r if self.lower < r.lower && r.lower < self.upper => true,
-      r if r.lower <= self.lower && self.upper <= r.upper => true,
-      _ => false,
+      r if r.lower <= self.lower && self.lower < r.upper && r.upper < self.upper => {
+        Ok(format!("[{},{})", self.lower, r.upper))
+      }
+      r if self.lower < r.lower && r.lower < self.upper && self.upper <= r.upper => {
+        Ok(format!("({},{}]", r.lower, self.upper))
+      }
+      r if r.lower < self.lower && self.upper < r.upper => {
+        Ok(format!("[{},{}]", self.lower, self.upper))
+      }
+      r if self.lower <= r.lower && r.upper <= self.upper => {
+        Ok(format!("({},{})", r.lower, r.upper))
+      }
+      _ => Err("共通集合はありません".to_owned()),
     }
   }
 }
@@ -49,12 +69,21 @@ impl MultiRange<ClosedRange> for ClosedRange {
     self.lower == closed_range.lower && self.upper == closed_range.upper
   }
 
-  fn is_connected_to(&self, range: &ClosedRange) -> bool {
+  fn intersection(&self, range: &ClosedRange) -> Result<String, String> {
     match range {
-      r if self.lower <= r.upper && r.upper <= self.upper => true,
-      r if self.lower <= r.lower && r.lower <= self.upper => true,
-      r if r.lower < self.lower && self.upper < r.upper => true,
-      _ => false,
+      r if r.lower <= self.lower && self.lower <= r.upper && r.upper <= self.upper => {
+        Ok(format!("[{},{}]", self.lower, r.upper))
+      }
+      r if self.lower <= r.lower && r.lower <= self.upper && self.upper <= r.upper => {
+        Ok(format!("[{},{}]", r.lower, self.upper))
+      }
+      r if r.lower <= self.lower && self.upper <= r.upper => {
+        Ok(format!("[{},{}]", self.lower, self.upper))
+      }
+      r if self.lower <= r.lower && r.upper <= self.upper => {
+        Ok(format!("[{},{}]", r.lower, r.upper))
+      }
+      _ => Err("共通集合はありません".to_owned()),
     }
   }
 }
